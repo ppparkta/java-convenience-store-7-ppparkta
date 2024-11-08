@@ -3,6 +3,7 @@ package store.model;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDate;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,13 +18,7 @@ class ProductTest {
 
         @BeforeEach
         void beforeInit() {
-            this.promotionType = new PromotionType("1+1", 1, 1,
-                    LocalDate.of(
-                            2024, LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()
-                    ),
-                    LocalDate.of(
-                            2024, LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()
-                    ));
+            this.promotionType = createPromotionType("1+1", 1, 1);
         }
 
         @DisplayName("상품명이 빈 문자열일 때 예외가 발생한다.")
@@ -55,5 +50,30 @@ class ProductTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage(ExceptionMessage.INVALID_INTEGER_RANGE.getMessage());
         }
+    }
+
+    @DisplayName("이름과 프로모션타입이 동일하면 같은 상품으로 판단한다.")
+    @Test
+    void 동일한_상품을_찾음() {
+        // given
+        PromotionType promotionType = createPromotionType("1+1", 1, 1);
+        Product product1 = new Product("상품", 1000, promotionType);
+        Product product2 = new Product("상품", 1200, promotionType);
+
+        // when
+        boolean equalsResult = product1.equals(product2);
+
+        // then
+        Assertions.assertThat(equalsResult).isTrue();
+    }
+
+    PromotionType createPromotionType(String name, int buy, int get) {
+        return new PromotionType(name, buy, get,
+                LocalDate.of(
+                        2024, LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()
+                ),
+                LocalDate.of(
+                        2024, LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth()
+                ));
     }
 }

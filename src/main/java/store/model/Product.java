@@ -1,5 +1,6 @@
 package store.model;
 
+import java.util.Objects;
 import store.constant.ExceptionMessage;
 import store.constant.GeneralConfig;
 import store.exception.ExceptionUtils;
@@ -14,6 +15,24 @@ public class Product {
         this.name = name;
         this.price = price;
         this.promotionType = promotionType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) && Objects.equals(
+                promotionType, product.promotionType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price, promotionType);
     }
 
     private void validate(String name, long price) {
