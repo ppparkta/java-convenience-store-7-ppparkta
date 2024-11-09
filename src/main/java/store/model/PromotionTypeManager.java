@@ -21,6 +21,12 @@ public class PromotionTypeManager {
         }
     }
 
+    public boolean findPromotionType(String promotionName) {
+        return promotionTypes.stream().anyMatch(promotionType ->
+                promotionType.isNameEqual(promotionName)
+        );
+    }
+
     private void validate(PromotionTypeInputDto promotionTypeInputDto) {
         boolean isDuplicate = promotionTypes.stream().anyMatch(promotionType ->
                 promotionType.getName().equals(promotionTypeInputDto.name())

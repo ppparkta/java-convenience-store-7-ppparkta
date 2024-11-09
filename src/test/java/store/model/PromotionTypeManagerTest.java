@@ -9,7 +9,7 @@ import store.constant.ExceptionMessage;
 import store.dto.PromotionTypeInputDto;
 
 public class PromotionTypeManagerTest {
-    @DisplayName("")
+    @DisplayName("프로모션타입 추가 시 이름이 중복되면 예외가 발생한다.")
     @Test
     void 프로모션이름이_중복이면_예외() {
         String name = "새프로모션";
