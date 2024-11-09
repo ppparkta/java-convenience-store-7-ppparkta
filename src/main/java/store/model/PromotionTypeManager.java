@@ -2,6 +2,7 @@ package store.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import store.constant.ExceptionMessage;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionUtils;
@@ -21,10 +22,10 @@ public class PromotionTypeManager {
         }
     }
 
-    public boolean findPromotionType(String promotionName) {
-        return promotionTypes.stream().anyMatch(promotionType ->
-                promotionType.isNameEqual(promotionName)
-        );
+    public Optional<PromotionType> findMatchingPromotionType(String promotionName) {
+        return promotionTypes.stream()
+                .filter(promotionType -> promotionType.isNameEqual(promotionName))
+                .findFirst();
     }
 
     private void validate(PromotionTypeInputDto promotionTypeInputDto) {

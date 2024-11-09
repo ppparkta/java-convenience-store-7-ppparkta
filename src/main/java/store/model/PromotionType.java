@@ -3,7 +3,7 @@ package store.model;
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import store.constant.ExceptionMessage;
-import store.constant.GeneralConfig;
+import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
 public class PromotionType {
@@ -53,7 +53,7 @@ public class PromotionType {
     }
 
     private void validateQuantity(int quantity) {
-        if (quantity < GeneralConfig.PROMOTION_MIN_QUANTITY.getValue()) {
+        if (quantity < StoreConfig.PROMOTION_MIN_QUANTITY.getValue()) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_MIN_QUANTITY);
         }
         if (quantity > Integer.MAX_VALUE) {

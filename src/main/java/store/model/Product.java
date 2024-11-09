@@ -2,7 +2,7 @@ package store.model;
 
 import java.util.Objects;
 import store.constant.ExceptionMessage;
-import store.constant.GeneralConfig;
+import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
 public class Product {
@@ -34,6 +34,24 @@ public class Product {
         return Objects.hash(name, price, promotionType);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public boolean isSamePromotionType(String promotionName) {
+        if (this.promotionType == null && promotionName.isEmpty()) {
+            return true;
+        }
+        if (promotionName.equals(this.promotionType.getName())) {
+            return true;
+        }
+        return false;
+    }
+
     private void validate(String name, long price) {
         if (name == null || name.isEmpty()) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_EMPTY_INPUT);
@@ -42,7 +60,7 @@ public class Product {
     }
 
     private void validatePrice(long price) {
-        if (price < GeneralConfig.PRODUCT_MIN_PRICE.getValue()) {
+        if (price < StoreConfig.PRODUCT_MIN_PRICE.getValue()) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_MIN_QUANTITY);
         }
         if (price > Integer.MAX_VALUE) {
