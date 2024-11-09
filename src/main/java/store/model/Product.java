@@ -26,8 +26,7 @@ public class Product {
             return false;
         }
         Product product = (Product) o;
-        return Objects.equals(name, product.name) && Objects.equals(
-                promotionType, product.promotionType);
+        return Objects.equals(price, product.price) && Objects.equals(name, product.name);
     }
 
     @Override

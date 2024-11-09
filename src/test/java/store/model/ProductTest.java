@@ -52,13 +52,26 @@ class ProductTest {
         }
     }
 
-    @DisplayName("이름과 프로모션타입이 동일하면 같은 상품으로 판단한다.")
+    @DisplayName("이름과 가격 중 하나라도 다르면 다른 상품으로 판단한다.")
+    @Test
+    void 동일한_상품을_찾지못함() {
+        // given
+        Product product1 = new Product("상품", 1000, null);
+        Product product2 = new Product("상품", 2000, null);
+
+        // when
+        boolean equalsResult = product1.equals(product2);
+
+        // then
+        Assertions.assertThat(equalsResult).isFalse();
+    }
+
+    @DisplayName("이름과 가격이 동일하면 같은 상품으로 판단한다.")
     @Test
     void 동일한_상품을_찾음() {
         // given
-        PromotionType promotionType = createPromotionType("1+1", 1, 1);
-        Product product1 = new Product("상품", 1000, promotionType);
-        Product product2 = new Product("상품", 1200, promotionType);
+        Product product1 = new Product("상품", 1000, null);
+        Product product2 = new Product("상품", 1000, null);
 
         // when
         boolean equalsResult = product1.equals(product2);
