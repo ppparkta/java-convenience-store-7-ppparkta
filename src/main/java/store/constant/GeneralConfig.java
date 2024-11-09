@@ -2,7 +2,8 @@ package store.constant;
 
 public enum GeneralConfig {
     PROMOTION_MIN_QUANTITY(1),
-    MIN_PRICE(1),
+    PRODUCT_MIN_PRICE(1),
+    PRODUCT_MIN_QUANTITY(0),
     ;
     private final int value;
 

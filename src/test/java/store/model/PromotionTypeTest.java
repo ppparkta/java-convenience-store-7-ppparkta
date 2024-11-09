@@ -20,7 +20,7 @@ public class PromotionTypeTest {
                 new PromotionType("", 1, 1, LocalDate.now(), LocalDate.now());
             })
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage(ExceptionMessage.ERROR_EMPTY_INPUT.getMessage());
+                    .hasMessage(ExceptionMessage.INVALID_EMPTY_INPUT.getMessage());
         }
 
         @DisplayName("프로모션 구매수량이 1 미만이면 예외가 발생한다.")

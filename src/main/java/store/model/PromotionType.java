@@ -24,7 +24,7 @@ public class PromotionType {
 
     private void validate(String name, int buy, int get, LocalDate startDate, LocalDate endDate) {
         if (name == null || name.isEmpty()) {
-            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.ERROR_EMPTY_INPUT);
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_EMPTY_INPUT);
         }
         validateQuantity(buy);
         validateQuantity(get);

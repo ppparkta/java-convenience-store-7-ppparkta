@@ -37,13 +37,13 @@ public class Product {
 
     private void validate(String name, long price) {
         if (name == null || name.isEmpty()) {
-            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.ERROR_EMPTY_INPUT);
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_EMPTY_INPUT);
         }
         validatePrice(price);
     }
 
     private void validatePrice(long price) {
-        if (price < GeneralConfig.MIN_PRICE.getValue()) {
+        if (price < GeneralConfig.PRODUCT_MIN_PRICE.getValue()) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_MIN_QUANTITY);
         }
         if (price > Integer.MAX_VALUE) {

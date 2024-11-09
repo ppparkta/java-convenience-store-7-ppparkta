@@ -28,7 +28,7 @@ class ProductTest {
                 new Product("", 1000, this.promotionType);
             })
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage(ExceptionMessage.ERROR_EMPTY_INPUT.getMessage());
+                    .hasMessage(ExceptionMessage.INVALID_EMPTY_INPUT.getMessage());
         }
 
         @DisplayName("가격이 음수이면 예외가 발생한다.")
