@@ -3,7 +3,7 @@ package store.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionUtils;
 
@@ -11,6 +11,9 @@ public class PromotionTypeManager {
     private final List<PromotionType> promotionTypes = new ArrayList<>();
 
     public PromotionTypeManager(List<PromotionTypeInputDto> promotionTypesInputDto) {
+        if (promotionTypesInputDto == null) {
+            return;
+        }
         for (PromotionTypeInputDto promotionTypeDto : promotionTypesInputDto) {
             validate(promotionTypeDto);
             promotionTypes.add(new PromotionType(
@@ -37,9 +40,12 @@ public class PromotionTypeManager {
                 .findFirst();
     }
 
-    public boolean isPromotionTypeMatched(String promotionName, List<Product> matchingProducts) {
+    public boolean isPromotionTypeMatched(String productName, String promotionName, List<Product> matchingProducts) {
+        if (matchingProducts == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         return matchingProducts.stream()
-                .anyMatch(product -> product.isSamePromotionType(promotionName));
+                .anyMatch(product -> product.isSamePromotionType(productName, promotionName));
     }
 
     private void validate(PromotionTypeInputDto promotionTypeInputDto) {
