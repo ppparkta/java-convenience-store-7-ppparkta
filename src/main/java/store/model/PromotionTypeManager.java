@@ -22,10 +22,24 @@ public class PromotionTypeManager {
         }
     }
 
+    public Optional<PromotionType> getValidPromotionType(String promotionName) {
+        Optional<PromotionType> matchingPromotionType = findMatchingPromotionType(
+                promotionName);
+        if (!promotionName.isEmpty() && matchingPromotionType.isEmpty()) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_PROMOTION_NAME);
+        }
+        return matchingPromotionType;
+    }
+
     public Optional<PromotionType> findMatchingPromotionType(String promotionName) {
         return promotionTypes.stream()
                 .filter(promotionType -> promotionType.isNameEqual(promotionName))
                 .findFirst();
+    }
+
+    public boolean isPromotionTypeMatched(String promotionName, List<Product> matchingProducts) {
+        return matchingProducts.stream()
+                .anyMatch(product -> product.isSamePromotionType(promotionName));
     }
 
     private void validate(PromotionTypeInputDto promotionTypeInputDto) {
