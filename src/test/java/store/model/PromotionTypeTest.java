@@ -6,10 +6,9 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 
 public class PromotionTypeTest {
-
     @Nested
     @DisplayName("프로모션 타입 생성 유효성 검사")
     class PromotionTypeValidate {
@@ -63,5 +62,4 @@ public class PromotionTypeTest {
                     .hasMessage(ExceptionMessage.INVALID_PROMOTION_END_DATE.getMessage());
         }
     }
-
 }

@@ -1,6 +1,6 @@
 package store.model;
 
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
@@ -16,6 +16,10 @@ public class Stock {
 
     public Product getProduct() {
         return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     public boolean isNameEqual(String productName) {

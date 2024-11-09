@@ -1,7 +1,7 @@
 package store.model;
 
 import java.util.Objects;
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
@@ -42,7 +42,14 @@ public class Product {
         return price;
     }
 
-    public boolean isSamePromotionType(String promotionName) {
+    public PromotionType getPromotionType() {
+        return promotionType;
+    }
+
+    public boolean isSamePromotionType(String productName, String promotionName) {
+        if (this.name != productName) {
+            return false;
+        }
         if (this.promotionType == null && promotionName.isEmpty()) {
             return true;
         }

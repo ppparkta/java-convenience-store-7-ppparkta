@@ -1,4 +1,6 @@
-package store.constant;
+package store.exception;
+
+import store.constant.StoreConfig;
 
 public enum ExceptionMessage {
     INVALID_EMPTY_INPUT("빈 문자열은 들어올 수 없습니다."),

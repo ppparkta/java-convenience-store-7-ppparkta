@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 
 public class StockTest {
     @DisplayName("상품이 비었을 때 재고를 생성하면 예외가 발생한다.")
@@ -26,5 +26,4 @@ public class StockTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ExceptionMessage.INVALID_PRODUCT_MIN_QUANTITY.getMessage());
     }
-
 }

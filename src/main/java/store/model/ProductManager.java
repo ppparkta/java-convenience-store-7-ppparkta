@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import store.dto.ProductInputDto;
+import store.exception.ExceptionMessage;
+import store.exception.ExceptionUtils;
 import store.model.validator.ProductManagerValidator;
 
 public class ProductManager {
@@ -15,9 +17,16 @@ public class ProductManager {
     }
 
     public void addProductStock(List<ProductInputDto> productsInputDto) {
+        if (productsInputDto == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         for (ProductInputDto productInput : productsInputDto) {
             processProductInput(productInput);
         }
+    }
+
+    public List<Stock> getStocks() {
+        return List.copyOf(stocks);
     }
 
     private void processProductInput(ProductInputDto productInput) {
@@ -43,7 +52,8 @@ public class ProductManager {
                                         Optional<PromotionType> matchingPromotionType) {
         ProductManagerValidator.validateProductPrice(productInput.price(), matchingProducts);
 
-        if (promotionTypeManager.isPromotionTypeMatched(productInput.promotion(), matchingProducts)) {
+        if (promotionTypeManager.isPromotionTypeMatched(productInput.name(), productInput.promotion(),
+                matchingProducts)) {
             addStockQuantity(productInput);
             return;
         }
@@ -52,9 +62,10 @@ public class ProductManager {
     }
 
     private void addStockQuantity(ProductInputDto productInput) {
-        stocks.stream()
-                .filter(stock -> stock.isNameEqual(productInput.name()))
-                .forEach(stock -> stock.addQuantity(productInput.quantity()));
+        List<Stock> samePromotionStocks = stocks.stream()
+                .filter(stock -> stock.getProduct().isSamePromotionType(productInput.name(), productInput.promotion()))
+                .toList();
+        samePromotionStocks.getFirst().addQuantity(productInput.quantity());
     }
 
     private void createProductAndStock(ProductInputDto productInput, Optional<PromotionType> matchingPromotionType) {

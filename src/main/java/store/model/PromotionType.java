@@ -2,7 +2,7 @@ package store.model;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
-import store.constant.ExceptionMessage;
+import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
@@ -41,12 +41,18 @@ public class PromotionType {
     }
 
     private void validateEndDate(LocalDate endDate) {
+        if (endDate == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         if (endDate.isBefore(DateTimes.now().toLocalDate())) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_PROMOTION_END_DATE);
         }
     }
 
     private void validateStartDate(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         if (startDate.isAfter(endDate)) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_PROMOTION_START_DATE);
         }
