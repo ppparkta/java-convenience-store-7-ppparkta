@@ -10,6 +10,7 @@ public enum ExceptionMessage {
     INVALID_PROMOTION_START_DATE("프로모션 시작일은 프로모션 종료일보다 빨라야 합니다."),
     NULL_VALUE_ERROR("null 값은 들어올 수 없습니다."),
     INVALID_PRODUCT_MIN_QUANTITY(""),
+    DUPLICATE_PROMOTION_NAME_ERROR("프로모션 이름은 중복될 수 없습니다."),
     ;
 
     static {

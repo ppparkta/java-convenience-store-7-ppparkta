@@ -22,6 +22,10 @@ public class PromotionType {
         this.endDate = endDate;
     }
 
+    public String getName() {
+        return name;
+    }
+
     private void validate(String name, int buy, int get, LocalDate startDate, LocalDate endDate) {
         if (name == null || name.isEmpty()) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_EMPTY_INPUT);
