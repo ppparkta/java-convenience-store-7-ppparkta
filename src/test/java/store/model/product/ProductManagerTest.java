@@ -1,4 +1,4 @@
-package store.model;
+package store.model.product;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,10 +9,9 @@ import org.junit.jupiter.api.Test;
 import store.dto.ProductInputDto;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionMessage;
-import store.model.product.ProductManager;
+import store.model.PromotionTypeManager;
 
 public class ProductManagerTest {
-    private ProductManager productManager;
     private PromotionTypeManager promotionTypeManager;
 
     @BeforeEach
@@ -21,7 +20,6 @@ public class ProductManagerTest {
                 List.of(
                         new PromotionTypeInputDto("1+1", 1, 1, LocalDate.now(), LocalDate.now().plusDays(10)),
                         new PromotionTypeInputDto("2+1", 2, 1, LocalDate.now(), LocalDate.now().plusDays(10))));
-        productManager = new ProductManager(promotionTypeManager);
     }
 
     @DisplayName("다른 상품 두개를 넣었을 때 재고가 올바르게 추가된다.")
@@ -32,8 +30,8 @@ public class ProductManagerTest {
         ProductInputDto productInput2 = new ProductInputDto("Product2", 200, 5, "");
         List<ProductInputDto> productInputs = List.of(productInput1, productInput2);
 
-        // when
-        productManager.addProductStock(productInputs);
+        //when
+        ProductManager productManager = new ProductManager(promotionTypeManager, productInputs);
 
         // then
         Assertions.assertThat(productManager.getStocks()).hasSize(2);
@@ -52,7 +50,7 @@ public class ProductManagerTest {
         List<ProductInputDto> productInputs = List.of(productInput1, productInput2);
 
         // when
-        productManager.addProductStock(productInputs);
+        ProductManager productManager = new ProductManager(promotionTypeManager, productInputs);
 
         // then
         Assertions.assertThat(productManager.getStocks()).hasSize(1);
@@ -69,16 +67,16 @@ public class ProductManagerTest {
         List<ProductInputDto> productInputs = List.of(productInput1, productInput2);
 
         // when
-        productManager.addProductStock(productInputs);
+        ProductManager productManager = new ProductManager(promotionTypeManager, productInputs);
 
         // then
         Assertions.assertThat(productManager.getStocks()).hasSize(2);
         Assertions.assertThat(productManager.getStocks().get(0).getProduct().getName()).isEqualTo("Product1");
-        Assertions.assertThat(productManager.getStocks().get(0).getProduct().getPromotionType().getName())
+        Assertions.assertThat(productManager.getStocks().get(0).getProduct().getPromotionType().get().getName())
                 .isEqualTo("1+1");
         Assertions.assertThat(productManager.getStocks().get(0).getQuantity()).isEqualTo(10);
         Assertions.assertThat(productManager.getStocks().get(1).getProduct().getName()).isEqualTo("Product1");
-        Assertions.assertThat(productManager.getStocks().get(1).getProduct().getPromotionType()).isEqualTo(null);
+        Assertions.assertThat(productManager.getStocks().get(1).getProduct().getPromotionType().isPresent()).isFalse();
         Assertions.assertThat(productManager.getStocks().get(1).getQuantity()).isEqualTo(5);
     }
 
@@ -90,7 +88,7 @@ public class ProductManagerTest {
         List<ProductInputDto> productInputs = List.of(productInput1, productInput2);
 
         Assertions.assertThatThrownBy(() -> {
-                    productManager.addProductStock(productInputs);
+                    new ProductManager(promotionTypeManager, productInputs);
                 })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ExceptionMessage.INVALID_PRODUCT_PRICE.getMessage());
@@ -104,7 +102,7 @@ public class ProductManagerTest {
         List<ProductInputDto> productInputs = List.of(productInput1, productInput2);
 
         Assertions.assertThatThrownBy(() -> {
-                    productManager.addProductStock(productInputs);
+                    new ProductManager(promotionTypeManager, productInputs);
                 })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ExceptionMessage.MAX_PROMOTION_TYPES_PER_PRODUCT_EXCEEDED.getMessage());

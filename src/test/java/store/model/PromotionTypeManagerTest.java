@@ -42,7 +42,9 @@ public class PromotionTypeManagerTest {
     @DisplayName("존재하지 않는 프로모션 이름을 넣으면 예외가 발생한다.")
     @Test
     void 없는_프로모션이름으로_프로모션타입_예외() {
-        List<PromotionTypeInputDto> promotionTypesInputDto = null;
+        List<PromotionTypeInputDto> promotionTypesInputDto = List.of(
+                new PromotionTypeInputDto("1+10", 1, 10, LocalDate.now(),
+                        LocalDate.now().plusDays(10)));
         PromotionTypeManager promotionTypeManager = new PromotionTypeManager(promotionTypesInputDto);
 
         Assertions.assertThatThrownBy(() -> {

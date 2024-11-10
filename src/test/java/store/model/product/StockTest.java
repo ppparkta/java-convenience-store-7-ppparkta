@@ -1,10 +1,11 @@
-package store.model;
+package store.model.product;
 
 import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.exception.ExceptionMessage;
+import store.model.PromotionType;
 import store.model.product.Product;
 import store.model.product.Stock;
 
