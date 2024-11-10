@@ -1,19 +1,24 @@
-package store.model.validator;
+package store.model.product;
 
 import java.util.List;
 import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
-import store.model.Product;
 
 public class ProductManagerValidator {
     public static void validateProductPrice(int priceInput, List<Product> matchingProducts) {
+        if (matchingProducts == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         if (isPriceMismatch(priceInput, matchingProducts)) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_PRODUCT_PRICE);
         }
     }
 
     public static void validateProductVariety(List<Product> matchingProducts, String promotionName) {
+        if (matchingProducts == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
         if (isProductVarietyExceeded(matchingProducts)) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.EXCEEDED_MAX_PRODUCT_PROMOTION_LIMIT);
         }

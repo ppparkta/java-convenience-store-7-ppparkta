@@ -1,5 +1,6 @@
-package store.model;
+package store.model.product;
 
+import java.util.Objects;
 import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
@@ -28,6 +29,11 @@ public class Stock {
 
     public void addQuantity(int quantity) {
         this.quantity += quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product);
     }
 
     private void validate(Product product, int quantity) {

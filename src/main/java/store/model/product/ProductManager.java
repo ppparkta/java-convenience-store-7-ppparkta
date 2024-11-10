@@ -1,4 +1,4 @@
-package store.model;
+package store.model.product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.Optional;
 import store.dto.ProductInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
-import store.model.validator.ProductManagerValidator;
+import store.model.PromotionType;
+import store.model.PromotionTypeManager;
 
 public class ProductManager {
     private final PromotionTypeManager promotionTypeManager;
@@ -41,11 +42,27 @@ public class ProductManager {
         handleExistingProducts(productInput, matchingProducts, matchingPromotionType);
     }
 
-    private List<Product> findMatchingProducts(String productName) {
+    public List<Product> findMatchingProducts(String productName) {
         return stocks.stream()
                 .filter(stock -> stock.isNameEqual(productName))
                 .map(Stock::getProduct)
                 .toList();
+    }
+
+    public Product getFirstMatchingProduct(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .map(Stock::getProduct)
+                .sorted()
+                .toList()
+                .getFirst();
+    }
+
+    public int getProductTotalQuantity(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .mapToInt(Stock::getQuantity)
+                .sum();
     }
 
     private void handleExistingProducts(ProductInputDto productInput, List<Product> matchingProducts,

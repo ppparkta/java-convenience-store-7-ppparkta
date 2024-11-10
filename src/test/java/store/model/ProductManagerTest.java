@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import store.dto.ProductInputDto;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionMessage;
+import store.model.product.ProductManager;
 
 public class ProductManagerTest {
     private ProductManager productManager;

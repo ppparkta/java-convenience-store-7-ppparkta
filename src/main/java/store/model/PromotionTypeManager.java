@@ -6,14 +6,13 @@ import java.util.Optional;
 import store.exception.ExceptionMessage;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionUtils;
+import store.model.product.Product;
 
 public class PromotionTypeManager {
     private final List<PromotionType> promotionTypes = new ArrayList<>();
 
     public PromotionTypeManager(List<PromotionTypeInputDto> promotionTypesInputDto) {
-        if (promotionTypesInputDto == null) {
-            return;
-        }
+        checkNullException(promotionTypesInputDto);
         for (PromotionTypeInputDto promotionTypeDto : promotionTypesInputDto) {
             validate(promotionTypeDto);
             promotionTypes.add(new PromotionType(
@@ -46,6 +45,12 @@ public class PromotionTypeManager {
         }
         return matchingProducts.stream()
                 .anyMatch(product -> product.isSamePromotionType(productName, promotionName));
+    }
+
+    private void checkNullException(List<PromotionTypeInputDto> promotionTypesInputDto) {
+        if (promotionTypesInputDto == null) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
+        }
     }
 
     private void validate(PromotionTypeInputDto promotionTypeInputDto) {

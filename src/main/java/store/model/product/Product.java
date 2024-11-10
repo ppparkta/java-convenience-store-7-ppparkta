@@ -1,11 +1,12 @@
-package store.model;
+package store.model.product;
 
 import java.util.Objects;
 import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
+import store.model.PromotionType;
 
-public class Product {
+public class Product implements Comparable<Product> {
     private final String name;
     private final long price;
     private final PromotionType promotionType;
@@ -34,6 +35,17 @@ public class Product {
         return Objects.hash(name, price, promotionType);
     }
 
+    @Override
+    public int compareTo(Product o) {
+        if (this.promotionType != null && o.promotionType == null) {
+            return 1;
+        }
+        if (this.promotionType == null && o.promotionType != null) {
+            return -1;
+        }
+        return 0;
+    }
+
     public String getName() {
         return name;
     }
@@ -47,7 +59,7 @@ public class Product {
     }
 
     public boolean isSamePromotionType(String productName, String promotionName) {
-        if (this.name != productName) {
+        if (!this.name.equals(productName)) {
             return false;
         }
         if (this.promotionType == null && promotionName.isEmpty()) {

@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.exception.ExceptionMessage;
+import store.model.product.Product;
+import store.model.product.Stock;
 
 public class StockTest {
     @DisplayName("상품이 비었을 때 재고를 생성하면 예외가 발생한다.")
