@@ -1,10 +1,10 @@
 package store.model.product;
 
 import java.util.Objects;
+import java.util.Optional;
 import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
-import store.model.PromotionType;
 
 public class Product implements Comparable<Product> {
     private final String name;
@@ -38,10 +38,10 @@ public class Product implements Comparable<Product> {
     @Override
     public int compareTo(Product o) {
         if (this.promotionType != null && o.promotionType == null) {
-            return 1;
+            return -1;
         }
         if (this.promotionType == null && o.promotionType != null) {
-            return -1;
+            return 1;
         }
         return 0;
     }
@@ -54,8 +54,8 @@ public class Product implements Comparable<Product> {
         return price;
     }
 
-    public PromotionType getPromotionType() {
-        return promotionType;
+    public Optional<PromotionType> getPromotionType() {
+        return Optional.ofNullable(promotionType);
     }
 
     public boolean isSamePromotionType(String productName, String promotionName) {
