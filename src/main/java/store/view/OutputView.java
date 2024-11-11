@@ -20,6 +20,13 @@ public class OutputView {
         System.out.println();
     }
 
+    public void printReceipt(ReceiptResultDto receiptResult) {
+        printHeader();
+        printOrderItems(receiptResult);
+        printPromotionBenefits(receiptResult);
+        printFooter(receiptResult);
+    }
+
     private void printStock(Stock stock) {
         String productName = stock.getProduct().getName();
         long price = stock.getProduct().getPrice();
@@ -40,13 +47,6 @@ public class OutputView {
             System.out.println(
                     String.format("- %s %,d원 %,d개 %s", productName, price, quantity, promotion));
         }
-    }
-
-    public void printReceipt(ReceiptResultDto receiptResult) {
-        printHeader();
-        printOrderItems(receiptResult);
-        printPromotionBenefits(receiptResult);
-        printFooter(receiptResult);
     }
 
     private void printHeader() {
