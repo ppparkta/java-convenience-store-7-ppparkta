@@ -9,6 +9,7 @@ import store.dto.response.PromotionResultDto;
 public class Membership {
     public static double calculateMembershipDiscount(Order order, List<PromotionResultDto> promotionResult) {
         Map<String, List<OrderItem>> groupedOrderItems = groupOrderItemsByProductName(order);
+
         long totalAmountWithoutPromotion = calculateTotalAmountWithoutPromotion(groupedOrderItems, promotionResult);
         long totalPromotionAmount = calculateTotalPromotionAmount(order, promotionResult);
 
@@ -34,7 +35,7 @@ public class Membership {
 
     private static boolean isPromotionProduct(String productName, List<PromotionResultDto> promotionResult) {
         return promotionResult.stream()
-                .anyMatch(promo -> promo.productName().equals(productName));
+                .anyMatch(promotion -> promotion.productName().equals(productName) && promotion.benefitQuantity() > 0);
     }
 
     private static int calculateTotalPromotionAmount(Order order, List<PromotionResultDto> promotionResult) {
@@ -50,6 +51,13 @@ public class Membership {
                     int applicableQuantity = Math.min(orderItem.getQuantity(), promotionResultDto.remainingQuantity());
                     return (long) applicableQuantity * orderItem.getProduct().getPrice();
                 })
+                .sum();
+    }
+
+    private static long calculateTotalAmountWithoutPromotionForOrder(Order order) {
+        return order.getOrderItems().stream()
+                .filter(orderItem -> orderItem.getPromotionType().isEmpty())
+                .mapToLong(orderItem -> (long) orderItem.getQuantity() * orderItem.getProduct().getPrice())
                 .sum();
     }
 }
