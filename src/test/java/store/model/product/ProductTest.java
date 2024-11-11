@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import store.exception.ExceptionMessage;
-import store.model.PromotionType;
-import store.model.product.Product;
 
 class ProductTest {
     @Nested

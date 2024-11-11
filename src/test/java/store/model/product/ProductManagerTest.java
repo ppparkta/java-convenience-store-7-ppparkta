@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import store.dto.ProductInputDto;
 import store.dto.PromotionTypeInputDto;
 import store.exception.ExceptionMessage;
-import store.model.PromotionTypeManager;
 
 public class ProductManagerTest {
     private PromotionTypeManager promotionTypeManager;

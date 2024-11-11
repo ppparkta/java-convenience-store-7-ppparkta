@@ -1,4 +1,4 @@
-package store.model;
+package store.model.product;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
@@ -24,6 +24,22 @@ public class PromotionType {
 
     public String getName() {
         return name;
+    }
+
+    public int getBuy() {
+        return buy;
+    }
+
+    public int getGet() {
+        return get;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
     public boolean isNameEqual(String name) {

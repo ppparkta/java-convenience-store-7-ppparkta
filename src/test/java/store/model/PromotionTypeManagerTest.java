@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.exception.ExceptionMessage;
 import store.dto.PromotionTypeInputDto;
+import store.model.product.PromotionType;
+import store.model.product.PromotionTypeManager;
 
 public class PromotionTypeManagerTest {
     @DisplayName("프로모션타입 추가 시 이름이 중복되면 예외가 발생한다.")
