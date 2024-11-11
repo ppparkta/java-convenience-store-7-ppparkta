@@ -12,6 +12,7 @@ public class Promotion {
     private int totalBonusQuantity;
     private int remainingQuantity;
     private int additionalReceivable;
+    private int benefitQuantity;
     private boolean canReceiveMorePromotion;
 
     public Promotion(ProductManager productManager, List<OrderItem> applicableOrderItems, LocalDate orderDate) {
@@ -33,6 +34,10 @@ public class Promotion {
 
     public int getAdditionalReceivable() {
         return additionalReceivable;
+    }
+
+    public int getBenefitQuantity() {
+        return benefitQuantity;
     }
 
     public boolean isCanReceiveMorePromotion() {
@@ -59,6 +64,7 @@ public class Promotion {
 
         totalBonusQuantity = calculateTotalPromotionQuantity(promotionUnit, promotionProductQuantity);
         remainingQuantity = calculateRemainingQuantity(totalBonusQuantity);
+        benefitQuantity = totalBonusQuantity / promotionUnit;
 
         if (remainingQuantity > 0) {
             calculateAdditionalReceivable(remainingQuantity);

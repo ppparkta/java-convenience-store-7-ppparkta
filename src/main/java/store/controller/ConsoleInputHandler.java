@@ -60,10 +60,10 @@ public class ConsoleInputHandler {
                 promotionResultDto.remainingQuantity());
     }
 
-    public String getContinueOrder() {
+    public String getUserInputYesOrNo(String prompt) {
         while (true) {
             try {
-                String userInput = inputView.getUserInput("\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
+                String userInput = inputView.getUserInput(prompt);
                 validYOrN(userInput);
                 return userInput;
             } catch (IllegalArgumentException e) {

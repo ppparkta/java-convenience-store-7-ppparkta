@@ -1,8 +1,10 @@
 package store.controller;
 
 import java.util.List;
+import store.dto.response.ReceiptResultDto;
 import store.dto.request.OrderItemInputDto;
 import store.dto.response.PromotionResultDto;
+import store.model.order.Membership;
 import store.model.order.Order;
 import store.model.product.ProductManager;
 import store.service.OrderService;
@@ -37,8 +39,9 @@ public class OrderController {
         List<OrderItemInputDto> orderItemsDto = getOrderItemsInputDto();
         Order order = orderService.createOrder(orderItemsDto);
         List<PromotionResultDto> promotionResults = handlePromotion(order);
-        handleMembership(order, promotionResults);
-        outputView.printReceipt();
+        double membershipDiscount = handleMembership(order, promotionResults);
+        ReceiptResultDto receiptResultDto = orderService.createReceipt(order, promotionResults, membershipDiscount);
+        outputView.printReceipt(receiptResultDto);
         if (!shouldContinueOrder()) {
             return true;
         }
@@ -51,7 +54,12 @@ public class OrderController {
         return orderService.processPromotions(order);
     }
 
-    private void handleMembership(Order order, List<PromotionResultDto> promotionResultDtos) {
+    private double handleMembership(Order order, List<PromotionResultDto> promotionResultDtos) {
+        String membership = inputHandler.getUserInputYesOrNo("\n멤버십 할인을 받으시겠습니까? (Y/N)");
+        if (membership.equals("Y")) {
+            return Membership.calculateMembershipDiscount(order, promotionResultDtos);
+        }
+        return 0;
     }
 
     private void handlePromotionResults(List<PromotionResultDto> promotionResults, Order order) {
@@ -80,7 +88,7 @@ public class OrderController {
     }
 
     private boolean shouldContinueOrder() {
-        return !"N".equals(inputHandler.getContinueOrder());
+        return !"N".equals(inputHandler.getUserInputYesOrNo("\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)"));
     }
 
     private List<OrderItemInputDto> getOrderItemsInputDto() {
