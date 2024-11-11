@@ -2,11 +2,12 @@ package store.model.product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import store.dto.request.ProductInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
-import store.model.order.OrderItem;
 
 public class ProductManager {
     private final PromotionTypeManager promotionTypeManager;
@@ -15,6 +16,7 @@ public class ProductManager {
     public ProductManager(PromotionTypeManager promotionTypeManager, List<ProductInputDto> productInputDtos) {
         this.promotionTypeManager = promotionTypeManager;
         addProductStock(productInputDtos);
+        addRegularProductsIfOnlyPromotions();
     }
 
     public List<Stock> getStocks() {
@@ -95,5 +97,30 @@ public class ProductManager {
         Product product = new Product(productInput.name(), productInput.price(),
                 matchingPromotionType.orElse(null));
         stocks.add(new Stock(product, productInput.quantity()));
+    }
+
+    private void addRegularProductsIfOnlyPromotions() {
+        Map<String, List<Stock>> groupedStocks = stocks.stream()
+                .collect(Collectors.groupingBy(stock -> stock.getProduct().getName()));
+
+        // 각 그룹에서 프로모션 상품이 있지만 일반 상품이 없는 경우 검사
+        for (Map.Entry<String, List<Stock>> entry : groupedStocks.entrySet()) {
+            List<Stock> stockList = entry.getValue();
+            boolean hasPromotionProduct = stockList.stream()
+                    .anyMatch(stock -> stock.getProduct().getPromotionType().isPresent());
+            boolean hasRegularProduct = stockList.stream()
+                    .anyMatch(stock -> stock.getProduct().getPromotionType().isEmpty());
+
+            // 일반 상품이 있는지 체크하고, 없을 때만 추가
+            if (hasPromotionProduct && !hasRegularProduct) {
+                Stock firstPromotionalStock = stockList.stream()
+                        .filter(stock -> stock.getProduct().getPromotionType().isPresent())
+                        .findFirst()
+                        .orElseThrow();
+                Product regularProduct = new Product(firstPromotionalStock.getProduct().getName(),
+                        firstPromotionalStock.getProduct().getPrice(), null);
+                stocks.add(new Stock(regularProduct, 0)); // 수량 0인 일반 상품 추가
+            }
+        }
     }
 }

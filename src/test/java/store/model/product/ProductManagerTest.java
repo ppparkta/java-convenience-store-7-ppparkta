@@ -33,7 +33,7 @@ public class ProductManagerTest {
         ProductManager productManager = new ProductManager(promotionTypeManager, productInputs);
 
         // then
-        Assertions.assertThat(productManager.getStocks()).hasSize(2);
+        Assertions.assertThat(productManager.getStocks()).hasSize(3);
         Assertions.assertThat(productManager.getStocks().get(0).getProduct().getName()).isEqualTo("Product1");
         Assertions.assertThat(productManager.getStocks().get(0).getQuantity()).isEqualTo(10);
         Assertions.assertThat(productManager.getStocks().get(1).getProduct().getName()).isEqualTo("Product2");
@@ -52,7 +52,7 @@ public class ProductManagerTest {
         ProductManager productManager = new ProductManager(promotionTypeManager, productInputs);
 
         // then
-        Assertions.assertThat(productManager.getStocks()).hasSize(1);
+        Assertions.assertThat(productManager.getStocks()).hasSize(2);
         Assertions.assertThat(productManager.getStocks().get(0).getProduct().getName()).isEqualTo("Product1");
         Assertions.assertThat(productManager.getStocks().get(0).getQuantity()).isEqualTo(15);
     }
