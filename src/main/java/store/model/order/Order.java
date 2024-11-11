@@ -32,8 +32,14 @@ public class Order {
         return List.copyOf(orderItems);
     }
 
-    public LocalDate getOrderDate() {
-        return orderDate;
+    public List<OrderItem> findOrderItemByProductName(String productName) {
+        return orderItems.stream()
+                .filter(orderItem -> orderItem.getProductName().equals(productName))
+                .toList();
+    }
+
+    public void removeOrderItem(OrderItem orderItem) {
+        orderItems.remove(orderItem);
     }
 
     private List<OrderItemInputDto> mergeDuplicateProducts(List<OrderItemInputDto> orderItemInputsDto) {

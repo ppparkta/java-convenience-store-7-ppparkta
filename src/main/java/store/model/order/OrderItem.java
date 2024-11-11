@@ -1,5 +1,6 @@
 package store.model.order;
 
+import java.util.Objects;
 import java.util.Optional;
 import store.model.product.Product;
 import store.model.product.PromotionType;
@@ -24,8 +25,33 @@ public class OrderItem implements Comparable<OrderItem> {
         return 0;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OrderItem orderItem = (OrderItem) o;
+        return quantity == orderItem.quantity && Objects.equals(product, orderItem.product);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product, quantity);
+    }
+
     public int getQuantity() {
         return quantity;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
     }
 
     public Optional<PromotionType> getPromotionType() {

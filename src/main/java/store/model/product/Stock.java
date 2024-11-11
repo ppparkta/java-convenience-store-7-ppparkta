@@ -1,11 +1,8 @@
 package store.model.product;
 
-import java.util.Objects;
-import java.util.Optional;
 import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
-import store.model.order.Promotion;
 
 public class Stock implements Comparable<Stock> {
     private final Product product;

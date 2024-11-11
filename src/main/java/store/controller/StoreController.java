@@ -10,8 +10,7 @@ public class StoreController {
             ProductController productController = new ProductController();
             ProductManager productManager = productController.initialize();
 
-            OrderController orderController = new OrderController(productManager);
-            orderController.processOrder();
+            new OrderController(productManager).processOrder();
         } catch (NoSuchElementException e) {
             System.out.println(ExceptionMessage.NO_SUCH_ERROR.getMessage());
         } catch (IllegalArgumentException e) {

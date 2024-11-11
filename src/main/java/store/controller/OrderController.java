@@ -24,32 +24,63 @@ public class OrderController {
     public void processOrder() {
         while (true) {
             try {
-                List<OrderItemInputDto> orderItemsDto = getOrderItemsInputDto();
-                Order order = orderService.createOrder(orderItemsDto);
-                List<PromotionResultDto> promotionResults = orderService.processPromotions(order);
-                for (PromotionResultDto promotionResultDto : promotionResults) {
-                    if (promotionResultDto.canReceiveMorePromotion()) {
-                        String receiveMorePromotion = inputHandler.getReceiveMorePromotion(promotionResultDto);
-                        if (receiveMorePromotion.equals("Y")) {
-                            // 무료 수량 추가하기
-                        }
-                    }
-                    if (!promotionResultDto.canReceiveMorePromotion() && promotionResultDto.remainingQuantity() > 0) {
-                        String noPromotion = inputHandler.getNoPromotion(promotionResultDto);
-                        if (noPromotion.equals("N")) {
-                            // 현재 상품 삭제하기
-                        }
-                    }
-                }
-                // 영수증 출력하기
-                // 반복할지 물어보기
-                if (inputHandler.getContinueOrder().equals("N")) {
+                if (inputAndProcessOrder()) {
                     break;
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private boolean inputAndProcessOrder() {
+        List<OrderItemInputDto> orderItemsDto = getOrderItemsInputDto();
+        Order order = orderService.createOrder(orderItemsDto);
+        List<PromotionResultDto> promotionResults = handlePromotion(order);
+        handleMembership(order, promotionResults);
+        outputView.printReceipt();
+        if (!shouldContinueOrder()) {
+            return true;
+        }
+        return false;
+    }
+
+    private List<PromotionResultDto> handlePromotion(Order order) {
+        List<PromotionResultDto> promotionResults = orderService.processPromotions(order);
+        handlePromotionResults(promotionResults, order);
+        return orderService.processPromotions(order);
+    }
+
+    private void handleMembership(Order order, List<PromotionResultDto> promotionResultDtos) {
+    }
+
+    private void handlePromotionResults(List<PromotionResultDto> promotionResults, Order order) {
+        for (PromotionResultDto promotionResultDto : promotionResults) {
+            if (promotionResultDto.canReceiveMorePromotion()) {
+                handleAdditionalPromotion(promotionResultDto, order);
+            }
+            if (!promotionResultDto.canReceiveMorePromotion() && promotionResultDto.remainingQuantity() > 0) {
+                handleNoPromotion(promotionResultDto, order);
+            }
+        }
+    }
+
+    private void handleAdditionalPromotion(PromotionResultDto promotionResultDto, Order order) {
+        String receiveMorePromotion = inputHandler.getReceiveMorePromotion(promotionResultDto);
+        if ("Y".equals(receiveMorePromotion)) {
+            orderService.processAdditionalPromotion(promotionResultDto, order);
+        }
+    }
+
+    private void handleNoPromotion(PromotionResultDto promotionResultDto, Order order) {
+        String noPromotion = inputHandler.getNoPromotion(promotionResultDto);
+        if ("N".equals(noPromotion)) {
+            orderService.processRemoveOrderItem(promotionResultDto, order);
+        }
+    }
+
+    private boolean shouldContinueOrder() {
+        return !"N".equals(inputHandler.getContinueOrder());
     }
 
     private List<OrderItemInputDto> getOrderItemsInputDto() {

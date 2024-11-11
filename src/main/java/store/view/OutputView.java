@@ -40,5 +40,8 @@ public class OutputView {
                     String.format("- %s %,d원 %,d개 %s", productName, price, quantity, promotion));
         }
     }
+
+    public void printReceipt() {
+    }
 }
 

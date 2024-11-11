@@ -26,24 +26,26 @@ public class ConsoleInputHandler {
         while (true) {
             try {
                 String userInput = inputView.getUserInput(
-                        String.format("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)",
-                                promotionResultDto.productName(),
-                                promotionResultDto.getAdditionalReceivable()));
+                        getReceiveMorePromoionPrompt(promotionResultDto));
                 validYOrN(userInput);
                 return userInput;
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private static String getReceiveMorePromoionPrompt(PromotionResultDto promotionResultDto) {
+        return String.format("\n현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)",
+                promotionResultDto.productName(),
+                promotionResultDto.getAdditionalReceivable());
     }
 
     public String getNoPromotion(PromotionResultDto promotionResultDto) {
         while (true) {
             try {
                 String userInput = inputView.getUserInput(
-                        String.format("현재 %s %s개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)",
-                                promotionResultDto.productName(),
-                                promotionResultDto.remainingQuantity()));
+                        getNoPromotionPrompt(promotionResultDto));
                 validYOrN(userInput);
                 return userInput;
             } catch (IllegalArgumentException e) {
@@ -52,10 +54,16 @@ public class ConsoleInputHandler {
         }
     }
 
+    private static String getNoPromotionPrompt(PromotionResultDto promotionResultDto) {
+        return String.format("\n현재 %s %s개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)",
+                promotionResultDto.productName(),
+                promotionResultDto.remainingQuantity());
+    }
+
     public String getContinueOrder() {
         while (true) {
             try {
-                String userInput = inputView.getUserInput("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
+                String userInput = inputView.getUserInput("\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
                 validYOrN(userInput);
                 return userInput;
             } catch (IllegalArgumentException e) {

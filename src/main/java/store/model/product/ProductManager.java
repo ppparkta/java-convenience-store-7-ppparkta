@@ -99,6 +99,7 @@ public class ProductManager {
         stocks.add(new Stock(product, productInput.quantity()));
     }
 
+    // todo: 리팩토링
     private void addRegularProductsIfOnlyPromotions() {
         Map<String, List<Stock>> groupedStocks = stocks.stream()
                 .collect(Collectors.groupingBy(stock -> stock.getProduct().getName()));
