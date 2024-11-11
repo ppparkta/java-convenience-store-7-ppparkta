@@ -6,28 +6,48 @@ import java.util.Optional;
 import store.dto.ProductInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
-import store.model.PromotionType;
-import store.model.PromotionTypeManager;
 
 public class ProductManager {
     private final PromotionTypeManager promotionTypeManager;
     private final List<Stock> stocks = new ArrayList<>();
 
-    public ProductManager(PromotionTypeManager promotionTypeManager) {
+    public ProductManager(PromotionTypeManager promotionTypeManager, List<ProductInputDto> productInputDtos) {
         this.promotionTypeManager = promotionTypeManager;
+        addProductStock(productInputDtos);
     }
 
-    public void addProductStock(List<ProductInputDto> productsInputDto) {
+    public List<Stock> getStocks() {
+        return List.copyOf(stocks);
+    }
+
+    public List<Product> findMatchingProducts(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .map(Stock::getProduct)
+                .toList();
+    }
+
+    public int getProductTotalQuantity(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .mapToInt(Stock::getQuantity)
+                .sum();
+    }
+
+    public List<Stock> findStocksByProductName(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .sorted()
+                .toList();
+    }
+
+    private void addProductStock(List<ProductInputDto> productsInputDto) {
         if (productsInputDto == null) {
             ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.NULL_VALUE_ERROR);
         }
         for (ProductInputDto productInput : productsInputDto) {
             processProductInput(productInput);
         }
-    }
-
-    public List<Stock> getStocks() {
-        return List.copyOf(stocks);
     }
 
     private void processProductInput(ProductInputDto productInput) {
@@ -40,29 +60,6 @@ public class ProductManager {
             return;
         }
         handleExistingProducts(productInput, matchingProducts, matchingPromotionType);
-    }
-
-    public List<Product> findMatchingProducts(String productName) {
-        return stocks.stream()
-                .filter(stock -> stock.isNameEqual(productName))
-                .map(Stock::getProduct)
-                .toList();
-    }
-
-    public Product getFirstMatchingProduct(String productName) {
-        return stocks.stream()
-                .filter(stock -> stock.isNameEqual(productName))
-                .map(Stock::getProduct)
-                .sorted()
-                .toList()
-                .getFirst();
-    }
-
-    public int getProductTotalQuantity(String productName) {
-        return stocks.stream()
-                .filter(stock -> stock.isNameEqual(productName))
-                .mapToInt(Stock::getQuantity)
-                .sum();
     }
 
     private void handleExistingProducts(ProductInputDto productInput, List<Product> matchingProducts,

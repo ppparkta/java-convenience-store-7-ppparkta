@@ -1,39 +1,73 @@
 package store.model.order;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import store.dto.OrderItemInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
 import store.model.product.Product;
 import store.model.product.ProductManager;
+import store.model.product.Stock;
 
 public class Order {
     private final ProductManager productManager;
     private final List<OrderItem> orderItems = new ArrayList<>();
+    private final LocalDate orderDate;
 
-    public Order(ProductManager productManager, List<OrderItemInputDto> orderItemInputsDto) {
+    public Order(ProductManager productManager, List<OrderItemInputDto> orderItemInputsDto,
+                 LocalDate orderDate) {
         this.productManager = productManager;
-        for (OrderItemInputDto orderItemInputDto : orderItemInputsDto) {
-            createOrUpdateOrderItem(orderItemInputDto.productName(), orderItemInputDto.orderQuantity());
+        this.orderDate = orderDate;
+        List<OrderItemInputDto> mergeOrderItemsInput = mergeDuplicateProducts(orderItemInputsDto);
+        for (OrderItemInputDto orderItemInputDto : mergeOrderItemsInput) {
+            createOrderItem(orderItemInputDto.productName(), orderItemInputDto.orderQuantity());
         }
     }
 
-    private void createOrUpdateOrderItem(String productName, int orderQuantity) {
+    private List<OrderItemInputDto> mergeDuplicateProducts(List<OrderItemInputDto> orderItemInputsDto) {
+        Map<String, Integer> mergedProducts = new HashMap<>();
+        for (OrderItemInputDto item : orderItemInputsDto) {
+            mergedProducts.merge(item.productName(), item.orderQuantity(), Integer::sum);
+        }
+        return mergedProducts.entrySet().stream()
+                .map(entry -> new OrderItemInputDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private void createOrderItem(String productName, int orderQuantity) {
         validateProductExistsInStore(productName);
         validateOrderQuantity(productName, orderQuantity);
-        if (isProductMatchedInOrder(productName)) {
-            addOrderItemQuantity(productName, orderQuantity);
-            return;
+        List<Stock> productStocks = productManager.findStocksByProductName(productName);
+        int remainingQuantity = orderQuantity;
+        for (Stock stock : productStocks) {
+            if (remainingQuantity == 0) {
+                return;
+            }
+            remainingQuantity = createOrderAndUpdateStock(stock, remainingQuantity);
         }
-        createOrderItem(productName, orderQuantity);
     }
 
-    private void validateProductExistsInStore(String productName) {
-        List<Product> matchingProductsInStore = productManager.findMatchingProducts(productName);
-        if (matchingProductsInStore == null || matchingProductsInStore.isEmpty()) {
-            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_PRODUCT_NAME);
+    private int createOrderAndUpdateStock(Stock productStock, int remainingQuantity) {
+        if (productStock.getQuantity() <= 0) {
+            return remainingQuantity;
         }
+        return calculateQuantityAndcreateOrderItem(productStock, remainingQuantity);
+    }
+
+    private int calculateQuantityAndcreateOrderItem(Stock productStock, int remainingQuantity) {
+        if (remainingQuantity <= productStock.getQuantity()) {
+            orderItems.add(new OrderItem(productStock.getProduct(), remainingQuantity));
+            productStock.reduceQuantity(remainingQuantity);
+            return 0;
+        }
+        orderItems.add(new OrderItem(productStock.getProduct(), productStock.getQuantity()));
+        remainingQuantity -= productStock.getQuantity();
+        productStock.reduceQuantity(productStock.getQuantity());
+        return remainingQuantity;
     }
 
     private void validateOrderQuantity(String productName, int orderQuantity) {
@@ -43,23 +77,11 @@ public class Order {
         }
     }
 
-    private boolean isProductMatchedInOrder(String productName) {
-        return orderItems.stream()
-                .anyMatch(orderItem -> orderItem.isProductNameEqual(productName));
-    }
-
-    private void addOrderItemQuantity(String productName, int orderQuantity) {
-        OrderItem foundOrderItem = orderItems.stream()
-                .filter(orderItem -> orderItem.isProductNameEqual(productName))
-                .sorted()
-                .toList()
-                .getFirst();
-        validateOrderQuantity(productName, foundOrderItem.getQuantity() + orderQuantity);
-        foundOrderItem.addQuantity(orderQuantity);
-    }
-
-    private void createOrderItem(String productName, int orderQuantity) {
-        Product matchingProduct = productManager.getFirstMatchingProduct(productName);
-        orderItems.add(new OrderItem(matchingProduct, orderQuantity));
+    private void validateProductExistsInStore(String productName) {
+        List<Product> matchingProductsInStore = productManager.findMatchingProducts(productName);
+        if (matchingProductsInStore == null || matchingProductsInStore.isEmpty()) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_ORDER_PRODUCT);
+        }
     }
 }
+

@@ -8,7 +8,6 @@ public class OrderItem implements Comparable<OrderItem> {
 
     public OrderItem(Product product, int quantity) {
         this.product = product;
-        validateQuantity(quantity);
         this.quantity = quantity;
     }
 
@@ -28,13 +27,10 @@ public class OrderItem implements Comparable<OrderItem> {
     }
 
     public void addQuantity(int quantity) {
-        this.quantity = quantity;
+        this.quantity += quantity;
     }
 
     public boolean isProductNameEqual(String productName) {
         return product.getName().equals(productName);
-    }
-
-    private void validateQuantity(int quantity) {
     }
 }

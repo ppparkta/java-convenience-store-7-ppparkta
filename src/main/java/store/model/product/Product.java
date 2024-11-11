@@ -6,7 +6,7 @@ import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
-public class Product implements Comparable<Product> {
+public class Product {
     private final String name;
     private final long price;
     private final PromotionType promotionType;
@@ -33,17 +33,6 @@ public class Product implements Comparable<Product> {
     @Override
     public int hashCode() {
         return Objects.hash(name, price, promotionType);
-    }
-
-    @Override
-    public int compareTo(Product o) {
-        if (this.promotionType != null && o.promotionType == null) {
-            return -1;
-        }
-        if (this.promotionType == null && o.promotionType != null) {
-            return 1;
-        }
-        return 0;
     }
 
     public String getName() {
