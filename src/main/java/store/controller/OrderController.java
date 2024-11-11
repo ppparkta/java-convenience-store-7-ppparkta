@@ -27,6 +27,25 @@ public class OrderController {
                 List<OrderItemInputDto> orderItemsDto = getOrderItemsInputDto();
                 Order order = orderService.createOrder(orderItemsDto);
                 List<PromotionResultDto> promotionResults = orderService.processPromotions(order);
+                for (PromotionResultDto promotionResultDto : promotionResults) {
+                    if (promotionResultDto.canReceiveMorePromotion()) {
+                        String receiveMorePromotion = inputHandler.getReceiveMorePromotion(promotionResultDto);
+                        if (receiveMorePromotion.equals("Y")) {
+                            // 무료 수량 추가하기
+                        }
+                    }
+                    if (!promotionResultDto.canReceiveMorePromotion() && promotionResultDto.remainingQuantity() > 0) {
+                        String noPromotion = inputHandler.getNoPromotion(promotionResultDto);
+                        if (noPromotion.equals("N")) {
+                            // 현재 상품 삭제하기
+                        }
+                    }
+                }
+                // 영수증 출력하기
+                // 반복할지 물어보기
+                if (inputHandler.getContinueOrder().equals("N")) {
+                    break;
+                }
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
