@@ -53,12 +53,19 @@ public class Promotion {
         int promotionUnit = promotionType.getBuy() + promotionType.getGet();
 
         totalBonusQuantity = calculateTotalPromotionQuantity(promotionUnit, promotionProductQuantity);
-        remainingQuantity = Math.max(0, getTotalOrderQuantity() - totalBonusQuantity);
+        remainingQuantity = calculateRemainingQuantity(totalBonusQuantity);
+
+        canReceiveMorePromotion = canReceivePromotion(remainingQuantity, promotionProductQuantity);
+    }
+
+    private int calculateRemainingQuantity(int totalBonusQuantity) {
+        return Math.max(0, getTotalOrderQuantity() - totalBonusQuantity);
+    }
+
+    private boolean canReceivePromotion(int remainingQuantity, int promotionProductQuantity) {
         int availableStockForPromotion = productManager.getPromotionProductQuantity(
                 applicableOrderItems.get(0).getProductName());
-
-        canReceiveMorePromotion = remainingQuantity >= promotionType.getBuy()
-                && availableStockForPromotion >= promotionType.getGet();
+        return remainingQuantity >= promotionType.getBuy() && availableStockForPromotion >= promotionType.getGet();
     }
 
     private int getTotalOrderQuantity() {
