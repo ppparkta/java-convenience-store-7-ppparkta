@@ -68,10 +68,10 @@ public class OrderService {
     }
 
     private ReceiptResultDto createReceiptResult(double membershipDiscount,
-                                                        List<OrderItemResultDto> orderItemResultDtos,
-                                                        long totalPurchaseAmount,
-                                                        List<PromotionBenefitResultDto> promotionBenefitResultDtos,
-                                                        long totalPromotionDiscount, int finalAmount) {
+                                                 List<OrderItemResultDto> orderItemResultDtos,
+                                                 long totalPurchaseAmount,
+                                                 List<PromotionBenefitResultDto> promotionBenefitResultDtos,
+                                                 long totalPromotionDiscount, int finalAmount) {
         return new ReceiptResultDto(
                 orderItemResultDtos,
                 promotionBenefitResultDtos,
@@ -83,7 +83,7 @@ public class OrderService {
     }
 
     private long calculateTotalPromotionDiscount(Order order,
-                                                        List<PromotionBenefitResultDto> promotionBenefitResultDtos) {
+                                                 List<PromotionBenefitResultDto> promotionBenefitResultDtos) {
         long totalPromotionDiscount = promotionBenefitResultDtos.stream()
                 .mapToLong(benefitResult -> (long) benefitResult.promotionBenefitQuantity() *
                         order.findOrderItemByProductName(benefitResult.productName()).get(0).getProduct().getPrice())
@@ -111,14 +111,33 @@ public class OrderService {
     }
 
     private List<OrderItemResultDto> createOrderItemResults(Order order) {
-        List<OrderItemResultDto> orderItemResultDtos = order.getOrderItems().stream()
-                .map(orderItem -> new OrderItemResultDto(
-                        orderItem.getProductName(),
-                        orderItem.getQuantity(),
-                        orderItem.getQuantity() * orderItem.getProduct().getPrice()
-                ))
+        Map<String, List<OrderItem>> groupedItems = groupOrderItemsByProductName(order);
+        return groupedItems.entrySet().stream()
+                .map(entry -> createOrderItemResultDto(entry.getKey(), entry.getValue()))
                 .toList();
-        return orderItemResultDtos;
+    }
+
+    private Map<String, List<OrderItem>> groupOrderItemsByProductName(Order order) {
+        return order.getOrderItems().stream()
+                .collect(Collectors.groupingBy(OrderItem::getProductName));
+    }
+
+    private OrderItemResultDto createOrderItemResultDto(String productName, List<OrderItem> orderItems) {
+        int totalQuantity = calculateTotalQuantity(orderItems);
+        long totalPrice = calculateTotalPrice(orderItems);
+        return new OrderItemResultDto(productName, totalQuantity, totalPrice);
+    }
+
+    private int calculateTotalQuantity(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+    }
+
+    private long calculateTotalPrice(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .mapToLong(orderItem -> orderItem.getQuantity() * orderItem.getProduct().getPrice())
+                .sum();
     }
 
     private int removeOrderItem(Order order, OrderItem orderItem) {

@@ -53,11 +53,4 @@ public class Membership {
                 })
                 .sum();
     }
-
-    private static long calculateTotalAmountWithoutPromotionForOrder(Order order) {
-        return order.getOrderItems().stream()
-                .filter(orderItem -> orderItem.getPromotionType().isEmpty())
-                .mapToLong(orderItem -> (long) orderItem.getQuantity() * orderItem.getProduct().getPrice())
-                .sum();
-    }
 }
