@@ -42,36 +42,65 @@ public class OutputView {
         }
     }
 
-    // todo: 리팩토링
     public void printReceipt(ReceiptResultDto receiptResult) {
-        int totalWidth = 36; // 기준이 되는 전체 폭
-
-        System.out.println("==============W 편의점================");
-        System.out.printf("%-20s %6s %10s%n", "상품명", "수량", "금액");
-
-        receiptResult.orderItems().forEach(orderItem ->
-                System.out.printf("%-20s %6d %10s%n",
-                        orderItem.productName(),
-                        orderItem.quantity(),
-                        String.format("%,d", orderItem.totalPrice())) // 금액 포맷팅
-        );
-
-        if (!receiptResult.promotionBenefits().isEmpty()) {
-            System.out.println("============= 증정 ===============");
-            receiptResult.promotionBenefits().forEach(promotionBenefit ->
-                    System.out.printf("%-20s %6d%n",
-                            promotionBenefit.productName(),
-                            promotionBenefit.promotionBenefitQuantity())
-            );
-        }
-
-        System.out.println("====================================");
-        System.out.printf("%-20s %6s %10s%n", "총구매액", "", String.format("%,d", receiptResult.totalPurchaseAmount()));
-        System.out.printf("%-20s %6s -%10s%n", "행사할인", "",
-                String.format("%,d", receiptResult.totalPromotionDiscount()));
-        System.out.printf("%-20s %6s -%10.0f%n", "멤버십할인", "", receiptResult.membershipDiscount());
-        System.out.printf("%-20s %6s %10s%n", "내실돈", "", String.format("%,d", receiptResult.finalAmount()));
+        printHeader();
+        printOrderItems(receiptResult);
+        printPromotionBenefits(receiptResult);
+        printFooter(receiptResult);
     }
 
+    private void printHeader() {
+        System.out.println("==============W 편의점================");
+        System.out.printf("%s%n", formatString("상품명", 20) + formatString("수량", 6) + formatString("금액", 10));
+    }
+
+    private void printOrderItems(ReceiptResultDto receiptResult) {
+        receiptResult.orderItems().forEach(orderItem ->
+                System.out.printf("%s%n", formatString(orderItem.productName(), 20)
+                        + formatString(String.valueOf(orderItem.quantity()), 6)
+                        + formatString(String.format("%,d", orderItem.totalPrice()), 10))
+        );
+    }
+
+    private void printPromotionBenefits(ReceiptResultDto receiptResult) {
+        if (!receiptResult.promotionBenefits().isEmpty()) {
+            System.out.println("=============증      정===============");
+            receiptResult.promotionBenefits().forEach(promotionBenefit ->
+                    System.out.printf("%s%n", formatString(promotionBenefit.productName(), 20)
+                            + formatString(String.valueOf(promotionBenefit.promotionBenefitQuantity()), 6))
+            );
+        }
+    }
+
+    private void printFooter(ReceiptResultDto receiptResult) {
+        System.out.println("====================================");
+        printTotalAmount(receiptResult);
+        printDiscounts(receiptResult);
+        printFinalAmount(receiptResult);
+    }
+
+    private void printTotalAmount(ReceiptResultDto receiptResult) {
+        System.out.printf("%s%n", formatString("총구매액", 20) + formatString("", 6)
+                + formatString(String.format("%,d", receiptResult.totalPurchaseAmount()), 10));
+    }
+
+    private void printDiscounts(ReceiptResultDto receiptResult) {
+        System.out.printf("%s%n", formatString("행사할인", 20) + formatString("", 6)
+                + formatString("-" + String.format("%,d", receiptResult.totalPromotionDiscount()), 10));
+        System.out.printf("%s%n", formatString("멤버십할인", 20) + formatString("", 6)
+                + formatString("-" + String.format("%.0f", receiptResult.membershipDiscount()), 10));
+    }
+
+    private void printFinalAmount(ReceiptResultDto receiptResult) {
+        System.out.printf("%s%n", formatString("내실돈", 20) + formatString("", 6)
+                + formatString(String.format("%,d", receiptResult.finalAmount()), 10));
+    }
+
+    private static String formatString(String input, int length) {
+        if (input.length() > length) {
+            return input.substring(0, length);
+        }
+        return String.format("%-" + length + "s", input);
+    }
 }
 
