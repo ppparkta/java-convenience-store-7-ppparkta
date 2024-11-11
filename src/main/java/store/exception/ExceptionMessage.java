@@ -28,7 +28,7 @@ public enum ExceptionMessage {
     INVALID_ORDER_ITEM_QUANTITY("재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."),
     INVALID_ORDER_PRODUCT("존재하지 않는 상품입니다. 다시 입력해 주세요."),
     INVALID_ORDER_FORMAT("올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요."),
-    ERROR_INVALID_INPUT("잘못된 입력입니다. 다시 입력해 주세요."),
+    NO_SUCH_ERROR("해당 항목을 찾을 수 없습니다."),
     ;
 
     private String message;
