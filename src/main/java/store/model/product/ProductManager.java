@@ -99,29 +99,31 @@ public class ProductManager {
         stocks.add(new Stock(product, productInput.quantity()));
     }
 
-    // todo: 리팩토링
     private void addRegularProductsIfOnlyPromotions() {
-        Map<String, List<Stock>> groupedStocks = stocks.stream()
-                .collect(Collectors.groupingBy(stock -> stock.getProduct().getName()));
+        stocks.stream()
+                .collect(Collectors.groupingBy(stock -> stock.getProduct().getName()))
+                .values()
+                .stream()
+                .filter(stockList -> hasPromotionOnly(stockList) && !hasRegularProduct(stockList))
+                .forEach(stockList -> {
+                    Product regularProduct = createRegularProductFromFirstPromotion(stockList);
+                    stocks.add(new Stock(regularProduct, 0));
+                });
+    }
 
-        // 각 그룹에서 프로모션 상품이 있지만 일반 상품이 없는 경우 검사
-        for (Map.Entry<String, List<Stock>> entry : groupedStocks.entrySet()) {
-            List<Stock> stockList = entry.getValue();
-            boolean hasPromotionProduct = stockList.stream()
-                    .anyMatch(stock -> stock.getProduct().getPromotionType().isPresent());
-            boolean hasRegularProduct = stockList.stream()
-                    .anyMatch(stock -> stock.getProduct().getPromotionType().isEmpty());
+    private boolean hasPromotionOnly(List<Stock> stockList) {
+        return stockList.stream().anyMatch(stock -> stock.getProduct().getPromotionType().isPresent());
+    }
 
-            // 일반 상품이 있는지 체크하고, 없을 때만 추가
-            if (hasPromotionProduct && !hasRegularProduct) {
-                Stock firstPromotionalStock = stockList.stream()
-                        .filter(stock -> stock.getProduct().getPromotionType().isPresent())
-                        .findFirst()
-                        .orElseThrow();
-                Product regularProduct = new Product(firstPromotionalStock.getProduct().getName(),
-                        firstPromotionalStock.getProduct().getPrice(), null);
-                stocks.add(new Stock(regularProduct, 0)); // 수량 0인 일반 상품 추가
-            }
-        }
+    private boolean hasRegularProduct(List<Stock> stockList) {
+        return stockList.stream().anyMatch(stock -> stock.getProduct().getPromotionType().isEmpty());
+    }
+
+    private Product createRegularProductFromFirstPromotion(List<Stock> stockList) {
+        return stockList.stream()
+                .filter(stock -> stock.getProduct().getPromotionType().isPresent())
+                .findFirst()
+                .map(stock -> new Product(stock.getProduct().getName(), stock.getProduct().getPrice(), null))
+                .orElseThrow(() -> new IllegalStateException(ExceptionMessage.NULL_VALUE_ERROR.getMessage()));
     }
 }
