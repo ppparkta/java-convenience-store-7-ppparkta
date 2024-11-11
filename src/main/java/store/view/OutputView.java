@@ -88,7 +88,7 @@ public class OutputView {
         System.out.printf("%s%n", formatString("행사할인", 20) + formatString("", 6)
                 + formatString("-" + String.format("%,d", receiptResult.totalPromotionDiscount()), 10));
         System.out.printf("%s%n", formatString("멤버십할인", 20) + formatString("", 6)
-                + formatString("-" + String.format("%.0f", receiptResult.membershipDiscount()), 10));
+                + formatString("-" + String.format("%,.0f", receiptResult.membershipDiscount()), 10));
     }
 
     private void printFinalAmount(ReceiptResultDto receiptResult) {
