@@ -18,6 +18,7 @@ public class PromotionTest {
     private ProductManager productManager;
     private List<OrderItemInputDto> applicableOrderItems1;
     private List<OrderItemInputDto> applicableOrderItems2;
+    private List<OrderItemInputDto> applicableOrderItems3;
     private LocalDate currentDate;
 
     @BeforeEach
@@ -25,11 +26,13 @@ public class PromotionTest {
         promotionTypeManager = new PromotionTypeManager(
                 List.of(
                         new PromotionTypeInputDto("1+1", 1, 1, LocalDate.now(), LocalDate.now().plusDays(10)),
-                        new PromotionTypeInputDto("2+1", 2, 1, LocalDate.now(), LocalDate.now().plusDays(10))));
+                        new PromotionTypeInputDto("2+1", 2, 1, LocalDate.now(), LocalDate.now().plusDays(10)),
+                        new PromotionTypeInputDto("2+3", 2, 3, LocalDate.now(), LocalDate.now().plusDays(10))));
         ProductInputDto productInput1 = new ProductInputDto("Product1", 1000, 10, "1+1");
         ProductInputDto productInput2 = new ProductInputDto("Product1", 1000, 5, "");
         ProductInputDto productInput3 = new ProductInputDto("Product2", 2000, 10, "");
-        List<ProductInputDto> productInputs = List.of(productInput1, productInput2, productInput3);
+        ProductInputDto productInput4 = new ProductInputDto("Product3", 1000, 10, "2+3");
+        List<ProductInputDto> productInputs = List.of(productInput1, productInput2, productInput3, productInput4);
 
         productManager = new ProductManager(promotionTypeManager, productInputs);
         OrderItemInputDto orderItemWithPromotion1 = new OrderItemInputDto(
@@ -37,9 +40,13 @@ public class PromotionTest {
                 10);
         OrderItemInputDto orderItemWithoutPromotion = new OrderItemInputDto(
                 productManager.getStocks().get(2).getProduct().getName(), 3);
+        OrderItemInputDto orderTwoPlusThreeItemInputDto = new OrderItemInputDto(
+                productManager.getStocks().getLast().getProduct().getName(), 4);
 
         applicableOrderItems1 = List.of(orderItemWithPromotion1);
         applicableOrderItems2 = List.of(orderItemWithoutPromotion);
+        applicableOrderItems3 = List.of(orderTwoPlusThreeItemInputDto);
+
         currentDate = DateTimes.now().toLocalDate();
     }
 
@@ -56,6 +63,23 @@ public class PromotionTest {
         Assertions.assertThat(promotion.isCanReceiveMorePromotion()).isFalse();
         Assertions.assertThat(promotion.getTotalBonusQuantity()).isEqualTo(10);
         Assertions.assertThat(promotion.getRemainingQuantity()).isEqualTo(0);
+        Assertions.assertThat(promotion.getAdditionalReceivable()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("2+3상품 4개 구매 시 1개 더 받을 수 있다.")
+    void 프로모션_2_3_3개구매_처리() {
+        // given
+        Order order = new Order(productManager, applicableOrderItems3, currentDate);
+
+        // when
+        Promotion promotion = new Promotion(productManager, order.getOrderItems(), currentDate);
+
+        // then
+        Assertions.assertThat(promotion.isCanReceiveMorePromotion()).isTrue();
+        Assertions.assertThat(promotion.getTotalBonusQuantity()).isEqualTo(0);
+        Assertions.assertThat(promotion.getRemainingQuantity()).isEqualTo(4);
+        Assertions.assertThat(promotion.getAdditionalReceivable()).isEqualTo(1);
     }
 
     @Test

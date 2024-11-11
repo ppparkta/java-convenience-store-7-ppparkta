@@ -11,6 +11,7 @@ public class Promotion {
     private final List<OrderItem> applicableOrderItems;
     private int totalBonusQuantity;
     private int remainingQuantity;
+    private int additionalReceivable;
     private boolean canReceiveMorePromotion;
 
     public Promotion(ProductManager productManager, List<OrderItem> applicableOrderItems, LocalDate orderDate) {
@@ -28,6 +29,10 @@ public class Promotion {
 
     public int getRemainingQuantity() {
         return remainingQuantity;
+    }
+
+    public int getAdditionalReceivable() {
+        return additionalReceivable;
     }
 
     public boolean isCanReceiveMorePromotion() {
@@ -55,14 +60,28 @@ public class Promotion {
         totalBonusQuantity = calculateTotalPromotionQuantity(promotionUnit, promotionProductQuantity);
         remainingQuantity = calculateRemainingQuantity(totalBonusQuantity);
 
-        canReceiveMorePromotion = canReceivePromotion(remainingQuantity, promotionProductQuantity);
+        if (remainingQuantity > 0) {
+            calculateAdditionalReceivable(remainingQuantity);
+        }
+        canReceiveMorePromotion = canReceivePromotion(remainingQuantity);
+    }
+
+    private void calculateAdditionalReceivable(int remainingQuantity) {
+        if (remainingQuantity >= promotionType.getBuy()) {
+            additionalReceivable = promotionType.getGet() - (remainingQuantity - promotionType.getBuy());
+            if (additionalReceivable < 0) {
+                additionalReceivable = 0;
+            }
+            return;
+        }
+        additionalReceivable = 0;
     }
 
     private int calculateRemainingQuantity(int totalBonusQuantity) {
         return Math.max(0, getTotalOrderQuantity() - totalBonusQuantity);
     }
 
-    private boolean canReceivePromotion(int remainingQuantity, int promotionProductQuantity) {
+    private boolean canReceivePromotion(int remainingQuantity) {
         int availableStockForPromotion = productManager.getPromotionProductQuantity(
                 applicableOrderItems.get(0).getProductName());
         return remainingQuantity >= promotionType.getBuy() && availableStockForPromotion >= promotionType.getGet();
