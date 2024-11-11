@@ -1,8 +1,7 @@
 package store.controller;
 
-import camp.nextstep.edu.missionutils.Console;
 import java.util.List;
-import store.dto.OrderItemInputDto;
+import store.dto.request.OrderItemInputDto;
 import store.parser.OrderParser;
 import store.view.ConsoleInputView;
 

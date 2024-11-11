@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import store.dto.OrderItemInputDto;
+import store.dto.request.OrderItemInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
 import store.model.product.Product;
@@ -26,6 +26,14 @@ public class Order {
         for (OrderItemInputDto orderItemInputDto : mergeOrderItemsInput) {
             createOrderItem(orderItemInputDto.productName(), orderItemInputDto.orderQuantity());
         }
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return List.copyOf(orderItems);
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
     }
 
     private List<OrderItemInputDto> mergeDuplicateProducts(List<OrderItemInputDto> orderItemInputsDto) {

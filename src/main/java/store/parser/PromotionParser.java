@@ -1,13 +1,11 @@
 package store.parser;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import store.constant.FileConfig;
-import store.dto.PromotionTypeInputDto;
+import store.dto.request.PromotionTypeInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
 

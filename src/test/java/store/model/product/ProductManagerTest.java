@@ -6,8 +6,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.dto.ProductInputDto;
-import store.dto.PromotionTypeInputDto;
+import store.dto.request.ProductInputDto;
+import store.dto.request.PromotionTypeInputDto;
 import store.exception.ExceptionMessage;
 
 public class ProductManagerTest {

@@ -3,9 +3,10 @@ package store.model.product;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import store.dto.ProductInputDto;
+import store.dto.request.ProductInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
+import store.model.order.OrderItem;
 
 public class ProductManager {
     private final PromotionTypeManager promotionTypeManager;
@@ -30,6 +31,14 @@ public class ProductManager {
     public int getProductTotalQuantity(String productName) {
         return stocks.stream()
                 .filter(stock -> stock.isNameEqual(productName))
+                .mapToInt(Stock::getQuantity)
+                .sum();
+    }
+
+    public int getPromotionProductQuantity(String productName) {
+        return stocks.stream()
+                .filter(stock -> stock.isNameEqual(productName))
+                .filter(stock -> stock.isPromotionStock())
                 .mapToInt(Stock::getQuantity)
                 .sum();
     }

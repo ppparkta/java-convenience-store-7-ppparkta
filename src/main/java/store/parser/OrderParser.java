@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import store.dto.OrderItemInputDto;
+import store.dto.request.OrderItemInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
 

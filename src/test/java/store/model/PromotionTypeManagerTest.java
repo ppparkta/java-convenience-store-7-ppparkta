@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.exception.ExceptionMessage;
-import store.dto.PromotionTypeInputDto;
+import store.dto.request.PromotionTypeInputDto;
 import store.model.product.PromotionType;
 import store.model.product.PromotionTypeManager;
 

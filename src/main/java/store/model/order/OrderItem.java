@@ -1,6 +1,8 @@
 package store.model.order;
 
+import java.util.Optional;
 import store.model.product.Product;
+import store.model.product.PromotionType;
 
 public class OrderItem implements Comparable<OrderItem> {
     private final Product product;
@@ -26,11 +28,11 @@ public class OrderItem implements Comparable<OrderItem> {
         return quantity;
     }
 
-    public void addQuantity(int quantity) {
-        this.quantity += quantity;
+    public Optional<PromotionType> getPromotionType() {
+        return product.getPromotionType();
     }
 
-    public boolean isProductNameEqual(String productName) {
-        return product.getName().equals(productName);
+    public String getProductName() {
+        return product.getName();
     }
 }

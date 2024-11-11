@@ -1,26 +1,81 @@
 package store.model.order;
 
 import java.time.LocalDate;
+import java.util.List;
+import store.model.product.ProductManager;
 import store.model.product.PromotionType;
 
 public class Promotion {
+    private final ProductManager productManager;
     private final PromotionType promotionType;
+    private final List<OrderItem> applicableOrderItems;
+    private int totalBonusQuantity;
+    private int remainingQuantity;
+    private boolean canReceiveMorePromotion;
 
-    public Promotion(PromotionType promotionType) {
-        this.promotionType = promotionType;
+    public Promotion(ProductManager productManager, List<OrderItem> applicableOrderItems, LocalDate orderDate) {
+        this.productManager = productManager;
+        this.promotionType = findPromotionType(applicableOrderItems);
+        this.applicableOrderItems = applicableOrderItems;
+        if (isPromotionValid(orderDate)) {
+            applyPromotion();
+        }
     }
 
-    public boolean validatePromotion(LocalDate orderDate) {
-        if (promotionType == null) {
-            return false;
-        }
-        if (!promotionType.getStartDate().isAfter(orderDate) && !promotionType.getEndDate().isBefore(orderDate)) {
-            return true;
-        }
-        return false;
+    public int getTotalBonusQuantity() {
+        return totalBonusQuantity;
     }
 
-    public boolean isExactPromotionMatch(int allQuantity, int orderQuantity) {
-        return false;
+    public int getRemainingQuantity() {
+        return remainingQuantity;
+    }
+
+    public boolean isCanReceiveMorePromotion() {
+        return canReceiveMorePromotion;
+    }
+
+    private PromotionType findPromotionType(List<OrderItem> applicableOrderItems) {
+        return applicableOrderItems.stream()
+                .filter(orderItem -> orderItem.getPromotionType().isPresent())
+                .map(orderItem -> orderItem.getPromotionType().get())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isPromotionValid(LocalDate orderDate) {
+        return promotionType != null &&
+                !orderDate.isBefore(promotionType.getStartDate()) &&
+                !orderDate.isAfter(promotionType.getEndDate());
+    }
+
+    private void applyPromotion() {
+        int promotionProductQuantity = getPromotionProductQuantity();
+        int promotionUnit = promotionType.getBuy() + promotionType.getGet();
+
+        totalBonusQuantity = calculateTotalPromotionQuantity(promotionUnit, promotionProductQuantity);
+        remainingQuantity = Math.max(0, getTotalOrderQuantity() - totalBonusQuantity);
+        int availableStockForPromotion = productManager.getPromotionProductQuantity(
+                applicableOrderItems.get(0).getProductName());
+
+        canReceiveMorePromotion = remainingQuantity >= promotionType.getBuy()
+                && availableStockForPromotion >= promotionType.getGet();
+    }
+
+    private int getTotalOrderQuantity() {
+        return applicableOrderItems.stream()
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+    }
+
+    private int getPromotionProductQuantity() {
+        return applicableOrderItems.stream()
+                .filter(orderItem -> orderItem.getPromotionType().isPresent())
+                .mapToInt(OrderItem::getQuantity)
+                .sum();
+    }
+
+    private int calculateTotalPromotionQuantity(int promotionUnit, int promotionProductQuantity) {
+        int promotionCount = promotionProductQuantity / promotionUnit;
+        return promotionCount * promotionUnit;
     }
 }

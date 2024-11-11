@@ -1,8 +1,8 @@
 package store.controller;
 
 import java.util.List;
-import store.dto.ProductInputDto;
-import store.dto.PromotionTypeInputDto;
+import store.dto.request.ProductInputDto;
+import store.dto.request.PromotionTypeInputDto;
 import store.parser.ProductParser;
 import store.parser.PromotionParser;
 import store.view.FileInputView;

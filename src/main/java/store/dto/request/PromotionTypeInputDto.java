@@ -1,4 +1,4 @@
-package store.dto;
+package store.dto.request;
 
 import java.time.LocalDate;
 

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import store.exception.ExceptionMessage;
-import store.dto.PromotionTypeInputDto;
+import store.dto.request.PromotionTypeInputDto;
 import store.exception.ExceptionUtils;
-import store.model.product.Product;
-import store.model.product.PromotionType;
 
 public class PromotionTypeManager {
     private final List<PromotionType> promotionTypes = new ArrayList<>();

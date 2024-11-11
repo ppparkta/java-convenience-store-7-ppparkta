@@ -3,7 +3,7 @@ package store.parser;
 import java.util.List;
 import java.util.Optional;
 import store.constant.FileConfig;
-import store.dto.ProductInputDto;
+import store.dto.request.ProductInputDto;
 import store.exception.ExceptionMessage;
 import store.exception.ExceptionUtils;
 
