@@ -40,8 +40,8 @@ public class Membership {
 
     private static int calculateTotalPromotionAmount(Order order, List<PromotionResultDto> promotionResult) {
         return promotionResult.stream()
-                .filter(promo -> promo.remainingQuantity() > 0)
-                .mapToInt(promo -> calculateAmountForRemainingQuantity(order, promo))
+                .filter(promotion -> promotion.remainingQuantity() > 0 && promotion.benefitQuantity() > 0)
+                .mapToInt(promotion -> calculateAmountForRemainingQuantity(order, promotion))
                 .sum();
     }
 
