@@ -3,7 +3,7 @@ package store.controller;
 import java.util.List;
 import store.dto.ProductInputDto;
 import store.dto.PromotionTypeInputDto;
-import store.model.PromotionTypeManager;
+import store.model.product.PromotionTypeManager;
 import store.model.product.ProductManager;
 
 public class ProductController {

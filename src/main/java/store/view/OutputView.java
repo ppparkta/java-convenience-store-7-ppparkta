@@ -2,7 +2,7 @@ package store.view;
 
 import java.util.List;
 import java.util.Optional;
-import store.model.PromotionType;
+import store.model.product.PromotionType;
 import store.model.product.Stock;
 
 public class OutputView {
@@ -16,6 +16,7 @@ public class OutputView {
         for (Stock stock : stocks) {
             printStock(stock);
         }
+        System.out.println();
     }
 
     private void printStock(Stock stock) {

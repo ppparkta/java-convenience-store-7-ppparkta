@@ -1,6 +1,5 @@
 package store.parser;
 
-import camp.nextstep.edu.missionutils.DateTimes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +54,7 @@ public class OrderParser {
             validateOrderFormat(productFields);
             String productName = productFields[0];
             int quantity = Integer.parseInt(productFields[1]);
-            return new OrderItemInputDto(productName, quantity, DateTimes.now().toLocalDate());
+            return new OrderItemInputDto(productName, quantity);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(ExceptionMessage.INVALID_ORDER_FORMAT.getMessage());
         }

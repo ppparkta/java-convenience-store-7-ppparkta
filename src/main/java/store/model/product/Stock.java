@@ -5,7 +5,7 @@ import store.exception.ExceptionMessage;
 import store.constant.StoreConfig;
 import store.exception.ExceptionUtils;
 
-public class Stock {
+public class Stock implements Comparable<Stock> {
     private final Product product;
     private int quantity;
 
@@ -31,9 +31,21 @@ public class Stock {
         this.quantity += quantity;
     }
 
+    public void reduceQuantity(int quantity) {
+        if (this.quantity < quantity) {
+            ExceptionUtils.throwIllegalArgumentException(ExceptionMessage.INVALID_ORDER_ITEM_QUANTITY);
+        }
+        this.quantity -= quantity;
+    }
+
     @Override
-    public int hashCode() {
-        return Objects.hash(product);
+    public int compareTo(Stock o) {
+        if (this.product.getPromotionType() == null && o.product.getPromotionType() != null) {
+            return 1;
+        } else if (this.product.getPromotionType() != null && o.product.getPromotionType() == null) {
+            return -1;
+        }
+        return 0;
     }
 
     private void validate(Product product, int quantity) {
